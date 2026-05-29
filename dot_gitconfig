@@ -1,0 +1,13 @@
+[user]
+	name = robian
+	email = 288016+robian@users.noreply.github.com
+
+[core]
+	editor = nvim
+	pager = cat
+
+[pager]
+	branch = false
+
+[alias]
+	wt = "!f() { base=\"${2:-origin/main}\"; git worktree add -b \"$1\" \"$1\" \"$base\"; }; f"
