@@ -9,6 +9,33 @@ fpath=(
   $fpath
 )
 
+autoload -Uz colors && colors
+setopt prompt_subst
+
+git_prompt_info() {
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
+
+  local branch dirty
+  branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null) || return
+  branch=${branch//\%/%%}
+
+  if [[ -n "$(git status --porcelain --untracked-files=normal 2>/dev/null)" ]]; then
+    dirty=" %F{yellow}✗%f"
+  else
+    dirty=""
+  fi
+
+  print -r -- "%F{blue}git:(%F{red}${branch}%F{blue})%f${dirty} "
+}
+
+identity_color='%F{green}'
+if [[ -n "${SSH_AUTH_SOCK:-}" ]]; then
+  identity_color='%F{red}'
+fi
+
+PROMPT='${identity_color}%n@%m%f %F{cyan}%~%f $(git_prompt_info)
+%(?.%F{green}➜%f .%F{red}➜%f )'
+
 if command -v fzf >/dev/null 2>&1; then
   if [[ -r /usr/share/doc/fzf/examples/completion.zsh ]]; then
     source /usr/share/doc/fzf/examples/completion.zsh
